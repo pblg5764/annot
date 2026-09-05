@@ -4,8 +4,7 @@ AnotAI - Brand Module
 Single source of truth for product identity, colour palette and embedded
 brand assets.
 
-Brand assets are base64-embedded so the packaged .exe remains a true
-single file with no external asset dependencies.
+Assets are base64-embedded so the packaged .exe stays a true single file.
 
 Powered by Maehan Solutions.
 """
@@ -19,35 +18,35 @@ import io
 APP_NAME    = "AnotAI"
 APP_TAGLINE = "Powered by Maehan Solutions"
 APP_STRAP   = "Intelligent Annotation Extraction"
-APP_VERSION = "2.0"
+APP_VERSION = "3.0"
 COMPANY     = "Maehan Solutions"
 
 # ======================================================================
 # PALETTE  -  dark blue / sky blue / cream / white / black
 # ======================================================================
-DARK_BLUE    = "#0B2545"   # primary brand, headers, splash background
-DARK_BLUE_2  = "#123A6B"   # elevated navy, hover states
-NAVY_LINE    = "#1B3B63"   # borders on dark surfaces
+DARK_BLUE    = "#0B2545"
+DARK_BLUE_2  = "#123A6B"
+NAVY_LINE    = "#1B3B63"
 
-SKY          = "#4FA3D9"   # primary accent, actions
-SKY_LIGHT    = "#7FC4EC"   # hover, highlights
-SKY_PALE     = "#DCEEF9"   # tinted fills, drop zone
-SKY_DARK     = "#2E7FB8"   # pressed states
+SKY          = "#4FA3D9"
+SKY_LIGHT    = "#7FC4EC"
+SKY_PALE     = "#DCEEF9"
+SKY_DARK     = "#2E7FB8"
 
-CREAM        = "#F7F1E3"   # warm app background
-CREAM_DEEP   = "#EFE6D2"   # alternating rows, subtle blocks
+CREAM        = "#F7F1E3"
+CREAM_DEEP   = "#EFE6D2"
 
 WHITE        = "#FFFFFF"
 BLACK        = "#111111"
-INK          = "#1A1A1A"   # body text
-MUTED        = "#5C6B7A"   # secondary text
-GREY_LINE    = "#D8D2C4"   # borders on light surfaces
+INK          = "#1A1A1A"
+MUTED        = "#5C6B7A"
+GREY_LINE    = "#D8D2C4"
 
 SUCCESS      = "#1E7A4C"
 WARNING      = "#B8860B"
 DANGER       = "#B3261E"
 
-# Excel-safe variants (openpyxl wants no "#" prefix)
+# Excel-safe (no "#")
 XL_DARK_BLUE  = "0B2545"
 XL_SKY        = "4FA3D9"
 XL_SKY_PALE   = "DCEEF9"
@@ -57,8 +56,8 @@ XL_WHITE      = "FFFFFF"
 XL_BLACK      = "111111"
 XL_GREY_LINE  = "D8D2C4"
 
-# Ring drawn around the target annotation inside each snapshot (PIL RGB)
-BOX_COLOR = (179, 38, 30)
+# Marker drawn around / over the target annotation (PIL RGB)
+BOX_COLOR = (200, 30, 35)
 
 
 # ======================================================================
@@ -69,23 +68,19 @@ _ICON_B64 = "AAABAAcAEBAAAAAAIACiAgAAdgAAABgYAAAAACAAlQQAABgDAAAgIAAAAAAgAKMGAAC
 
 
 def logo_bytes() -> bytes:
-    """Raw PNG bytes of the AnotAI mark (256x256, transparent background)."""
     return base64.b64decode(_LOGO_B64)
 
 
 def icon_bytes() -> bytes:
-    """Raw ICO bytes for the window / taskbar icon."""
     return base64.b64decode(_ICON_B64)
 
 
 def logo_pil():
-    """The mark as a PIL image (used for Excel report branding)."""
     from PIL import Image
     return Image.open(io.BytesIO(logo_bytes())).convert("RGBA")
 
 
 def logo_pixmap(size: int = 128):
-    """The mark as a scaled QPixmap."""
     from PyQt5.QtCore import Qt
     from PyQt5.QtGui import QPixmap
     pm = QPixmap()
@@ -96,7 +91,6 @@ def logo_pixmap(size: int = 128):
 
 
 def app_icon():
-    """QIcon for the window and taskbar."""
     from PyQt5.QtGui import QIcon, QPixmap
     pm = QPixmap()
     pm.loadFromData(logo_bytes(), "PNG")
@@ -104,10 +98,9 @@ def app_icon():
 
 
 # ======================================================================
-# STYLESHEET BUILDERS
+# STYLESHEETS
 # ======================================================================
 def button(base: str, hover: str, pressed: str, fg: str = WHITE) -> str:
-    """Build a rounded, flat button stylesheet in the brand palette."""
     return (
         "QPushButton{background:%s;color:%s;border:none;border-radius:7px;"
         "padding:8px 16px;font-weight:600;}"
@@ -120,14 +113,23 @@ def button(base: str, hover: str, pressed: str, fg: str = WHITE) -> str:
 
 PRIMARY_BTN = button(SKY, SKY_DARK, DARK_BLUE_2)
 DARK_BTN    = button(DARK_BLUE, DARK_BLUE_2, BLACK)
+DANGER_BTN  = button(DANGER, "#8E1E18", "#6E1712")
 
 SUBTLE_BTN = (
     "QPushButton{background:%s;color:%s;border:1px solid %s;border-radius:7px;"
-    "padding:7px 14px;font-weight:600;}"
+    "padding:6px 12px;font-weight:600;}"
     "QPushButton:hover{background:%s;border-color:%s;}"
     "QPushButton:pressed{background:%s;}"
     "QPushButton:disabled{background:#F0F0F0;color:#A9B2BA;border-color:#E2E2E2;}"
     % (WHITE, DARK_BLUE, GREY_LINE, SKY_PALE, SKY, CREAM_DEEP)
+)
+
+LINK_BTN = (
+    "QPushButton{background:transparent;color:%s;border:none;"
+    "text-decoration:underline;font-weight:600;padding:2px 6px;}"
+    "QPushButton:hover{color:%s;}"
+    "QPushButton:disabled{color:#A9B2BA;}"
+    % (SKY_DARK, DARK_BLUE)
 )
 
 
@@ -140,25 +142,6 @@ QMainWindow, QWidget {
 }
 QLabel { background: transparent; }
 
-QGroupBox {
-    background: %(WHITE)s;
-    border: 1px solid %(GREY_LINE)s;
-    border-radius: 10px;
-    margin-top: 14px;
-    padding: 16px 12px 12px 12px;
-    font-weight: 700;
-    color: %(DARK_BLUE)s;
-}
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    left: 14px;
-    padding: 3px 9px;
-    background: %(SKY_PALE)s;
-    border-radius: 5px;
-    color: %(DARK_BLUE)s;
-}
-
 QProgressBar {
     border: 1px solid %(GREY_LINE)s;
     border-radius: 7px;
@@ -166,7 +149,7 @@ QProgressBar {
     text-align: center;
     color: %(DARK_BLUE)s;
     font-weight: 600;
-    height: 20px;
+    height: 22px;
 }
 QProgressBar::chunk {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
@@ -208,6 +191,7 @@ QScrollBar::handle:vertical {
 QScrollBar::handle:vertical:hover { background: %(SKY)s; }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
 
+QDialog { background: %(CREAM)s; }
 QMessageBox { background: %(WHITE)s; }
 QToolTip {
     background: %(DARK_BLUE)s; color: %(WHITE)s;
