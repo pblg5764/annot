@@ -1,1 +1,28 @@
-.github/workflows/build.yml
+name: Build AnotAI exe
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build
+        run: pyinstaller --clean --noconfirm AnotAI.spec
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AnotAI-windows
+          path: dist/AnotAI.exe
