@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.spec.bak
+pyportable/
+AnotAI_Reports/
+.venv/
+venv/
+.DS_Store
+Thumbs.db
